@@ -1,0 +1,16 @@
+{
+  "name": "vault-crew",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "22.x"
+  },
+  "scripts": {
+    "start": "node --experimental-strip-types server/main.ts",
+    "test": "node --test --experimental-strip-types server/*.test.ts"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "ws": "^8.18.3"
+  }
+}

@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#070B14">
+  <title>Vault Crew</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="Vault Crew home"><span class="brand-mark">VC</span><span>VAULT CREW</span></a>
+    <div class="header-actions">
+      <div id="roomChip" class="room-chip hidden"><span>ROOM</span><strong id="roomChipCode">----</strong><button id="copyHeader" class="icon-button" aria-label="Copy invite link" title="Copy invite link">⧉</button></div>
+      <button id="muteToggle" class="icon-button" aria-label="Mute sound" title="Mute sound">🔊</button>
+      <span id="connectionDot" class="connection-dot" title="Disconnected"></span>
+    </div>
+  </header>
+
+  <main>
+    <div id="status" class="status-line" aria-live="polite">Waking up the vault…</div>
+
+    <section id="entry" class="screen landing-screen">
+      <div class="landing-grid">
+        <div class="hero-copy">
+          <div class="eyebrow">CO-OPERATIVE PUZZLE // 2–8 OPERATIVES</div>
+          <h1>VAULT<br><span>CREW</span></h1>
+          <p class="tagline">Everyone holds a piece of the code.</p>
+          <p class="hero-note">No installs. No accounts. Just your crew, the clues, and one locked vault.</p>
+          <div class="entry-actions">
+            <div class="action-card">
+              <label for="createName">Create a crew</label>
+              <div class="input-row"><input id="createName" maxlength="20" autocomplete="nickname" placeholder="Your codename"><button id="create" class="primary">CREATE ROOM</button></div>
+            </div>
+            <div class="action-card">
+              <label>Join a crew</label>
+              <div class="room-code-input" id="roomCodeBoxes" aria-label="Four-character room code">
+                <input id="room0" maxlength="1" inputmode="text" autocomplete="off" aria-label="Room code character 1">
+                <input id="room1" maxlength="1" inputmode="text" autocomplete="off" aria-label="Room code character 2">
+                <input id="room2" maxlength="1" inputmode="text" autocomplete="off" aria-label="Room code character 3">
+                <input id="room3" maxlength="1" inputmode="text" autocomplete="off" aria-label="Room code character 4">
+              </div>
+              <div class="input-row"><input id="name" maxlength="20" autocomplete="nickname" placeholder="Your codename"><button id="join" class="primary">JOIN ROOM</button></div>
+            </div>
+          </div>
+          <button id="howBtn" class="text-button">HOW TO PLAY →</button>
+        </div>
+        <div class="vault-hero" aria-hidden="true"><div class="vault-door"><div class="vault-ring ring-one"></div><div class="vault-ring ring-two"></div><div class="vault-spokes"><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="vault-hub"><span>LOCK</span></div><b class="bolt b1"></b><b class="bolt b2"></b><b class="bolt b3"></b><b class="bolt b4"></b><b class="bolt b5"></b><b class="bolt b6"></b></div><div class="vault-shadow"></div></div>
+      </div>
+    </section>
+
+    <section id="how" class="screen info-screen hidden">
+      <div class="section-heading"><div><span class="eyebrow">FIELD MANUAL</span><h2>How to crack the vault</h2></div><button id="backHow" class="secondary">BACK</button></div>
+      <div class="steps">
+        <article><span>01</span><div><h3>Collect evidence</h3><p>Every operative gets clues. Read them aloud—nobody sees the whole picture alone.</p></div></article>
+        <article><span>02</span><div><h3>Cross-check</h3><p>Combine every clue to identify the one valid code. Watch the position and arithmetic wording.</p></div></article>
+        <article><span>03</span><div><h3>Feed the keypad</h3><p>One random operative gets the keypad and a smaller clue set. They get three attempts.</p></div></article>
+        <article><span>04</span><div><h3>Beat the clock</h3><p>The timer is shared and server-controlled. Crack the vault to keep the run alive.</p></div></article>
+      </div>
+    </section>
+
+    <section id="lobby" class="screen lobby-screen hidden">
+      <div class="lobby-top"><div><span class="eyebrow">CREW BRIEFING</span><h2>ROOM <strong id="roomOut">----</strong></h2></div><button id="lobbyHow" class="secondary">HOW TO PLAY</button></div>
+      <div class="invite-strip"><span>INVITE YOUR CREW</span><button id="copyInvite" class="secondary">COPY INVITE LINK</button></div>
+      <div class="crew-panel"><div class="panel-label"><span>OPERATIVES</span><span id="crewCount">0/8</span></div><div id="players" class="player-grid"></div></div>
+      <div id="lobbyResult" class="result-panel hidden"></div>
+      <div class="lobby-footer"><p id="wait" class="wait-line"></p><button id="start" class="primary start-button">START GAME</button></div>
+    </section>
+
+    <section id="game" class="screen round-screen hidden">
+      <div class="round-header"><div><span class="eyebrow">VAULT <span id="vaultNumber">01</span> // LEVEL <span id="level">01</span></span><h2 id="role">YOUR EVIDENCE</h2></div><div class="timer-wrap"><span class="timer-label">TIME</span><strong id="timer">150.0</strong><div class="timer-track"><i id="timerBar"></i></div></div></div>
+      <div id="crewStrip" class="crew-strip"></div>
+      <div id="attemptLog" class="attempt-feed"></div>
+      <div id="roundLayout" class="round-layout">
+        <div class="round-main-column">
+          <div class="evidence-column"><div class="column-label">YOUR EVIDENCE</div><div id="clues" class="clues"></div></div>
+          <div id="keypad" class="keypad-panel hidden"><div class="column-label">SECURE KEYPAD</div><div id="slots" class="slots">____</div><div class="keypad"><button data-key="1">1</button><button data-key="2">2</button><button data-key="3">3</button><button data-key="4">4</button><button data-key="5">5</button><button data-key="6">6</button><button data-key="7">7</button><button data-key="8">8</button><button data-key="9">9</button><button data-key="0">0</button><button id="back" aria-label="Backspace">←</button><button id="submit" class="submit-key" aria-label="Submit code">↵</button></div><div class="attempts"><span>ATTEMPTS</span><div id="attemptIcons"><i></i><i></i><i></i></div><strong id="attempts">3</strong></div></div>
+        </div>
+        <section id="chatSection" class="chat-dock hidden">
+      <div class="chat-head"><div><span class="column-label">CREW COMMS</span><span id="unreadBadge" class="unread-badge hidden">0</span></div><button id="expandChat" class="icon-button" aria-label="Expand chat">↗</button></div>
+      <div id="chatPreview" class="chat-preview"></div>
+      <div id="chatFull" class="chat-full hidden"><div id="chat" class="chat-list"></div></div>
+      <div class="chat-compose"><input id="chatInput" maxlength="300" autocomplete="off" placeholder="Share a clue…"><button id="sendChat" class="primary">SEND</button></div>
+      <div class="quick-reactions"><button data-reaction="Got it">GOT IT</button><button data-reaction="Say again?">SAY AGAIN?</button><button data-reaction="Try it!">TRY IT!</button></div>
+        </section>
+      </div>
+    </section>
+    <div id="roundResult" class="round-result hidden"></div>
+  </main>
+  <script src="/app.js" defer></script>
+</body>
+</html>

@@ -1386,3 +1386,24 @@ button:disabled {
   .round-screen { padding-bottom: 150px; }
   .round-layout > .chat-dock { max-height: 132px; }
 }
+
+/* Desktop chat: full history is always visible; unread indicators are mobile-only. */
+@media (min-width: 1024px) {
+  .round-layout > .chat-dock .chat-preview {
+    display: none;
+  }
+
+  .round-layout > .chat-dock .chat-full,
+  .round-layout > .chat-dock .chat-full.hidden {
+    display: block !important;
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: none;
+    overflow-y: auto;
+  }
+
+  .round-layout > .chat-dock .unread-badge,
+  .round-layout > .chat-dock #expandChat {
+    display: none;
+  }
+}

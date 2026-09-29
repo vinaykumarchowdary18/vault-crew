@@ -11,6 +11,7 @@ let lastChatCount = 0;
 let unreadChatCount = 0;
 let chatExpanded = false;
 let currentMessages = [];
+let currentMessageIds = new Set();
 let lastLobbyMessage = null;
 let lastRoundResult = null;
 let currentRemainingMs = 150000;
@@ -97,6 +98,23 @@ function updateMuteButton() {
   $('muteToggle').setAttribute('aria-label', $('muteToggle').title);
 }
 
+function randomCodename() {
+  const animals = ['Fox', 'Wolf', 'Otter', 'Raven', 'Tiger', 'Panda', 'Lynx', 'Falcon', 'Badger', 'Cobra', 'Hawk', 'Bear'];
+  return `Agent ${animals[Math.floor(Math.random() * animals.length)]}`;
+}
+
+function ensureCodename(input) {
+  const name = input.value.trim();
+  if (name) return name;
+  const codename = randomCodename();
+  input.value = codename;
+  return codename;
+}
+
+function isDesktopChat() {
+  return window.matchMedia('(min-width: 1024px)').matches;
+}
+
 function resetRoundUi() {
   $('result')?.replaceChildren();
   $('attemptLog').innerHTML = '';
@@ -110,6 +128,7 @@ function resetRoundUi() {
   unreadChatCount = 0;
   $('roundResult').className = 'round-result hidden';
   currentMessages = [];
+  currentMessageIds = new Set();
   lastChatCount = 0;
 }
 
@@ -320,9 +339,11 @@ function renderAttempt(message) {
 }
 
 function renderChat(messages) {
-  const previousCount = currentMessages.length;
-  const newMessages = Math.max(0, messages.length - previousCount);
+  const previousIds = currentMessageIds;
+  const incomingIds = new Set(messages.map((message) => message.id));
+  const newMessages = messages.filter((message) => !previousIds.has(message.id)).length;
   currentMessages = messages;
+  currentMessageIds = incomingIds;
   const latest = messages.slice(-3);
   $('chatPreview').innerHTML = '';
   latest.forEach((message) => {
@@ -334,7 +355,7 @@ function renderChat(messages) {
     $('chatPreview').append(line);
   });
   $('chat').innerHTML = '';
-  messages.slice(-50).forEach((message) => {
+  messages.slice(-100).forEach((message) => {
     const bubble = document.createElement('div');
     bubble.className = `chat-bubble ${message.nickname === sessionStorage.getItem('vault-crew-name') ? 'own' : ''}`;
     const name = document.createElement('strong');
@@ -343,7 +364,11 @@ function renderChat(messages) {
     $('chat').append(bubble);
   });
   $('chat').scrollTop = $('chat').scrollHeight;
-  if (newMessages > 0 && !chatExpanded) {
+  if (isDesktopChat()) {
+    unreadChatCount = 0;
+    $('unreadBadge').classList.add('hidden');
+  }
+  if (newMessages > 0 && !chatExpanded && !isDesktopChat()) {
     unreadChatCount += newMessages;
     $('unreadBadge').textContent = unreadChatCount;
     $('unreadBadge').classList.remove('hidden');
@@ -486,7 +511,7 @@ function handleRoomPaste(event) {
 
 $('create').onclick = () => {
   ensureAudio();
-  const nickname = $('createName').value.trim() || 'Player';
+  const nickname = ensureCodename($('createName'));
   sessionStorage.setItem('vault-crew-name', nickname);
   sessionToken = crypto.randomUUID();
   send({ type: 'create', nickname });
@@ -495,7 +520,7 @@ $('create').onclick = () => {
 $('join').onclick = () => {
   ensureAudio();
   const code = getRoomCodeFromBoxes();
-  const nickname = $('name').value.trim() || 'Player';
+  const nickname = ensureCodename($('name'));
   if (!/^[A-Z0-9]{4}$/.test(code)) {
     setStatus('Enter a 4-character room code.');
     return;
